@@ -1,0 +1,49 @@
+# --- IDE / Editor ---
+*.iml
+.idea/
+!.idea/codeStyles/
+!.idea/copyright/
+!.idea/inspectionProfiles/
+# Keep these if you want shared run configurations:
+#!.idea/runConfigurations/
+*.ipr
+*.iws
+
+# --- Android / Build ---
+.gradle/
+build/
+/local.properties
+/captures
+*.apk
+*.aar
+*.jks
+*.keystore
+
+# --- Native / C++ ---
+.externalNativeBuild
+.cxx/
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles/
+
+# --- Kotlin Multiplatform (KMP) ---
+.kotlin/
+compose-resources/
+/shared/build
+/composeApp/build
+/iosApp/build
+/iosApp/*.xcworkspace
+/iosApp/Pods
+/iosApp/DerivedData
+
+# --- System / OS ---
+.DS_Store
+Thumbs.db
+*.swp
+
+# --- Secrets / Environmental ---
+.env
+.env.*
+
+# --- Multimedia ---
+*.webp
