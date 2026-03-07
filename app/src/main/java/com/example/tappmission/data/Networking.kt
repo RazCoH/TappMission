@@ -1,7 +1,7 @@
 package com.example.tappmission.data
 
-import com.example.tappmission.data.model.NetworkResult
-import com.example.tappmission.data.request.ServerRequest
+import com.example.tappmission.data.models.NetworkResult
+import com.example.tappmission.data.models.ServerRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
