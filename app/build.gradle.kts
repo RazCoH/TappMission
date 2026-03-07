@@ -77,6 +77,8 @@ dependencies {
     // --- Dependency Injection ---
     implementation(libs.koin.android)
     implementation(libs.koin.core)
+    implementation(libs.koin.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     // --- Image Loading ---
     implementation(libs.coil)

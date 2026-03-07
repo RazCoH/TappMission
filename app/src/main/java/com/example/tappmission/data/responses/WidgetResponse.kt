@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class WidgetResponse(
     @SerialName("data")
-    val data: List<WidgetData>? = null,
+    val widgets: List<WidgetData>? = null,
     @SerialName("meta")
     val meta: MetaData? = null
 )
