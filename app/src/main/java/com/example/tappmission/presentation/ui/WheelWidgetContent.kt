@@ -33,7 +33,7 @@ fun WheelWidgetContent(
             Image(
                 provider = ImageProvider(it),
                 contentDescription = "Wheel",
-                modifier = GlanceModifier.size(200.dp),
+                modifier = GlanceModifier.size(160.dp),
                 contentScale = ContentScale.Fit
             )
         }
@@ -43,7 +43,7 @@ fun WheelWidgetContent(
             Image(
                 provider = ImageProvider(it),
                 contentDescription = "Frame",
-                modifier = GlanceModifier.size(220.dp),
+                modifier = GlanceModifier.size(180.dp),
                 contentScale = ContentScale.Fit
             )
         }
@@ -54,7 +54,7 @@ fun WheelWidgetContent(
                 provider = ImageProvider(it),
                 contentDescription = "Spin Button",
                 modifier = GlanceModifier
-                    .size(60.dp),
+                    .size(80.dp),
                     //todo .clickable(actionRunCallback<SpinActionCallback>()),
                 contentScale = ContentScale.Fit
             )
