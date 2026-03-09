@@ -1,4 +1,4 @@
-package com.example.tappmission.presentation.ui
+package com.example.tappmission.presentation.components
 
 import android.graphics.Bitmap
 import androidx.compose.runtime.Composable

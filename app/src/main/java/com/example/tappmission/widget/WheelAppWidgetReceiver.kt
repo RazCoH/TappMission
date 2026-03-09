@@ -2,8 +2,8 @@ package com.example.tappmission.widget
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
-import android.content.Intent
 import androidx.datastore.preferences.core.MutablePreferences
+import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -11,9 +11,10 @@ import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.example.tappmission.data.models.NetworkResult
 import com.example.tappmission.data.repositories.WidgetsRepository
-import com.example.tappmission.data.responses.WidgetResponse
+import com.example.tappmission.data.responses.WheelAssets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -62,36 +63,18 @@ class WheelAppWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
     }
 
     /**
-     * Called for every broadcast this receiver can receive.
-     * We filter for ACTION_REFRESH, which is sent when the user taps
-     * the "Update" button inside the widget.
-     */
-    override fun onReceive(context: Context, intent: Intent) {
-        super.onReceive(context, intent)
-        if (intent.action == ACTION_REFRESH) {
-            val pendingResult = goAsync()
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    fetchAndUpdateAll(context)
-                } finally {
-                    pendingResult.finish()
-                }
-            }
-        }
-    }
-
-    /**
-     * Core logic: updates every instance of this widget on the home screen.
+     * Core logic: updates every placed instance of this widget.
      *
-     * The flow is:
-     * 1. Find all placed widget instances via GlanceAppWidgetManager.
-     * 2. Set STATUS = loading and redraw immediately (user sees a spinner).
-     * 3. Make the network call on Dispatchers.IO.
-     * 4. Write the result (success or error) into DataStore Preferences.
-     * 5. Call update() so Glance re-reads the state and redraws the widget.
+     * Flow:
+     * 1. Set STATUS = loading on all instances and redraw (immediate feedback).
+     * 2. Fetch the config from the API.
+     * 3. On success — download or reuse cached bitmaps for all 4 wheel layers,
+     *    then set STATUS = success + persist the cache expiration value.
+     * 4. On error — set STATUS = error with a message.
+     * 5. Redraw all instances with the final state.
      *
-     * We loop over all instances because the user could place the same
-     * widget multiple times on different home screen pages.
+     * We loop over all glanceIds because the user can place the same widget
+     * on multiple home screen pages at once.
      */
     private suspend fun fetchAndUpdateAll(context: Context) {
         val glanceIds = GlanceAppWidgetManager(context)
@@ -106,48 +89,84 @@ class WheelAppWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
             glanceAppWidget.update(context, id)
         }
 
-        val result = repository.getWheelWidgetData()
+        when (val result = repository.getWheelWidgetData()) {
+            is NetworkResult.Success -> {
+                val widget = result.data.widgets?.firstOrNull()
+                val cacheExpiration = widget?.network?.attributes?.cacheExpiration ?: 0L
+                val assets = widget?.wheel?.wheelAssets
 
+                // Download or validate/reuse cached bitmaps for all 4 layers in parallel.
+                // getBitmapWithCache saves each file to cacheDir as a side-effect;
+                // provideGlance will read them from disk when it redraws the widget.
+                fetchAllBitmaps(context, cacheExpiration, assets)
+
+                glanceIds.forEach { id ->
+                    updateAppWidgetState(context, PreferencesGlanceStateDefinition, id) { prefs ->
+                        prefs.toMutablePreferences().apply {
+                            this[WheelWidgetKeys.STATUS] = WheelWidgetKeys.STATUS_SUCCESS
+                            this[WheelWidgetKeys.CACHE_EXPIRATION] = cacheExpiration
+                        }
+                    }
+                    glanceAppWidget.update(context, id)
+                }
+            }
+            is NetworkResult.Error -> applyErrorToAll(context, glanceIds, result.msg)
+            is NetworkResult.Exception -> applyErrorToAll(
+                context, glanceIds, result.e.message ?: "Unknown error"
+            )
+        }
+    }
+
+    /**
+     * Fetches all 4 wheel-layer bitmaps in parallel.
+     * Each call checks the disk cache first; only downloads if expired or missing.
+     * coroutineScope ensures we wait for all 4 before continuing.
+     *
+     * If [assets] is null the server sent no image data, so we skip the
+     * download entirely and let the widget show whatever is already on disk.
+     * If a single layer's URL is null (field missing from response), only
+     * that layer is skipped — the others still download normally.
+     */
+    private suspend fun fetchAllBitmaps(
+        context: Context,
+        cacheExpiration: Long,
+        assets: WheelAssets?
+    ) {
+        if (assets == null) return
+        coroutineScope {
+            AssetType.entries.forEach { assetType ->
+                launch {
+                    val url = assetType.buildUrl(assets)
+                    getBitmapWithCache(context, url, assetType, cacheExpiration)
+                }
+            }
+        }
+    }
+
+    /**
+     * Writes error state to all widget instances and triggers a redraw.
+     * Extracted to avoid repeating the forEach block for each error branch.
+     */
+    private suspend fun applyErrorToAll(
+        context: Context,
+        glanceIds: List<GlanceId>,
+        message: String
+    ) {
         glanceIds.forEach { id ->
             updateAppWidgetState(context, PreferencesGlanceStateDefinition, id) { prefs ->
-                prefs.toMutablePreferences().apply {
-                    when (result) {
-                        is NetworkResult.Success -> applySuccess(result.data)
-                        is NetworkResult.Error -> applyError(result.msg)
-                        is NetworkResult.Exception -> applyError(
-                            result.e.message ?: "Unknown error"
-                        )
-                    }
-                }
+                prefs.toMutablePreferences().apply { applyError(message) }
             }
             glanceAppWidget.update(context, id)
         }
     }
 
     /**
-     * Writes success data into the MutablePreferences snapshot.
-     * Extension function on MutablePreferences to keep fetchAndUpdateAll clean.
-     */
-    private fun MutablePreferences.applySuccess(data: WidgetResponse) {
-        val widget = data.widgets?.firstOrNull()
-        this[WheelWidgetKeys.STATUS] = WheelWidgetKeys.STATUS_SUCCESS
-        this[WheelWidgetKeys.WIDGET_NAME] = widget?.name.orEmpty()
-        this[WheelWidgetKeys.WIDGET_TYPE] = widget?.type.orEmpty()
-        this[WheelWidgetKeys.WIDGET_VERSION] = data.meta?.version?.toString().orEmpty()
-        this[WheelWidgetKeys.WIDGET_HOST] = widget?.network?.assets?.host.orEmpty()
-    }
-
-    /**
      * Writes error state into the MutablePreferences snapshot.
-     * Covers both HTTP errors (NetworkResult.Error) and exceptions (no internet, timeout).
+     * Covers both HTTP errors (NetworkResult.Error) and exceptions
+     * (no internet, timeout, etc.).
      */
     private fun MutablePreferences.applyError(message: String) {
         this[WheelWidgetKeys.STATUS] = WheelWidgetKeys.STATUS_ERROR
         this[WheelWidgetKeys.ERROR_MESSAGE] = message
-    }
-
-    companion object {
-        /** Custom broadcast action fired by the "Update" button in the widget UI. */
-        const val ACTION_REFRESH = "com.example.tappmission.widget.ACTION_REFRESH"
     }
 }
