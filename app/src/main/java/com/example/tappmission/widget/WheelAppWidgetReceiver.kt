@@ -94,6 +94,7 @@ class WheelAppWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
                 val widget = result.data.widgets?.firstOrNull()
                 val cacheExpiration = widget?.network?.attributes?.cacheExpiration ?: 0L
                 val assets = widget?.wheel?.wheelAssets
+                val rotationConfig = widget?.wheel?.rotation
 
                 // Download or validate/reuse cached bitmaps for all 4 layers in parallel.
                 // getBitmapWithCache saves each file to cacheDir as a side-effect;
@@ -105,6 +106,17 @@ class WheelAppWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
                         prefs.toMutablePreferences().apply {
                             this[WheelWidgetKeys.STATUS] = WheelWidgetKeys.STATUS_SUCCESS
                             this[WheelWidgetKeys.CACHE_EXPIRATION] = cacheExpiration
+                            // Persist rotation config so SpinActionCallback can read it
+                            // without a network call when the user taps spin.
+                            rotationConfig?.duration?.let {
+                                this[WheelWidgetKeys.ROTATION_DURATION] = it.toLong()
+                            }
+                            rotationConfig?.minimumSpins?.let {
+                                this[WheelWidgetKeys.ROTATION_MIN_SPINS] = it
+                            }
+                            rotationConfig?.maximumSpins?.let {
+                                this[WheelWidgetKeys.ROTATION_MAX_SPINS] = it
+                            }
                         }
                     }
                     glanceAppWidget.update(context, id)
