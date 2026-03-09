@@ -1,5 +1,6 @@
 package com.example.tappmission.widget
 
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
@@ -13,6 +14,8 @@ import androidx.datastore.preferences.core.stringPreferencesKey
  * [WheelAppWidgetReceiver] writes to these keys; [WheelAppWidget] reads them.
  */
 object WheelWidgetKeys {
+
+    val ROTATION_ANGLE = floatPreferencesKey("rotation_angle")
     val STATUS = stringPreferencesKey("status")
     val ERROR_MESSAGE = stringPreferencesKey("error_message")
 
