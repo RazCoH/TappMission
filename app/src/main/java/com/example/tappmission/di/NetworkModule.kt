@@ -27,6 +27,8 @@ val networkModule = module {
         Json {
             ignoreUnknownKeys = true
             isLenient = true
+            decodeEnumsCaseInsensitive = true
+            coerceInputValues = true
         }
     }
 

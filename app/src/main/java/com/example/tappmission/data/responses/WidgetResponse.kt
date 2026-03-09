@@ -1,5 +1,6 @@
 package com.example.tappmission.data.responses
 
+import com.example.tappmission.utils.AssetsPaths
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -58,7 +59,7 @@ data class WheelConfig(
     @SerialName("rotation")
     val rotation: RotationConfig? = null,
     @SerialName("assets")
-    val wheelAssets: WheelAssets? = null
+    val wheelAssets: AssetType? = AssetType.UNKNOWN
 )
 
 @Serializable
@@ -74,17 +75,28 @@ data class RotationConfig(
 )
 
 @Serializable
-data class WheelAssets(
+enum class AssetType {
     @SerialName("bg")
-    val background: String? = null,
-    @SerialName("wheelFrame")
-    val wheelFrame: String? = null,
-    @SerialName("wheelSpin")
-    val wheelSpin: String? = null,
-    @SerialName("wheel")
-    val wheelImage: String? = null
-)
+    BACKGROUND,
 
+    @SerialName("wheelFrame")
+    WHEEL_FRAME,
+
+    @SerialName("wheelSpin")
+    WHEEL_SPIN,
+
+    @SerialName("wheel")
+    WHEEL,
+    UNKNOWN;
+
+    val assetPath: String get() = when(this){
+        BACKGROUND -> AssetsPaths.BG_PATH
+        WHEEL_FRAME -> AssetsPaths.WHEEL_FRAME_PATH
+        WHEEL_SPIN -> AssetsPaths.WHEEL_SPIN_PATH
+        WHEEL -> AssetsPaths.WHEEL
+        UNKNOWN -> ""
+    }
+}
 @Serializable
 data class MetaData(
     @SerialName("version")
