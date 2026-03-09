@@ -57,7 +57,7 @@ class WheelAppWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
             try {
                 fetchAndUpdateAll(context)
             } finally {
-                pendingResult.finish()
+                pendingResult?.finish()
             }
         }
     }
