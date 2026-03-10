@@ -9,7 +9,7 @@ import androidx.glance.layout.*
 import androidx.glance.ImageProvider
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
-import com.example.tappmission.widget.WheelWidgetKeys
+import com.example.tappmission.utils.WheelWidgetKeys
 import com.example.tappmission.widget.SpinActionCallback
 import com.example.tappmission.utils.extensions.getSafeRotatedBitmap
 

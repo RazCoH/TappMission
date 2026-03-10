@@ -14,6 +14,7 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.example.tappmission.presentation.components.WheelWidgetContent
 import com.example.tappmission.presentation.components.ErrorContent
 import com.example.tappmission.presentation.components.LoadingContent
+import com.example.tappmission.utils.WheelWidgetKeys
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

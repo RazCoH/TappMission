@@ -7,6 +7,7 @@ import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.state.getAppWidgetState
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
+import com.example.tappmission.utils.WheelWidgetKeys
 import kotlinx.coroutines.delay
 import kotlin.math.pow
 import kotlin.random.Random
