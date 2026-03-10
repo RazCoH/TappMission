@@ -115,7 +115,7 @@ fun loadCachedBitmap(context: Context, assetType: AssetType): Bitmap? {
 /**
  * Downloads a Bitmap from [url] using Coil's ImageLoader.
  * allowHardware(false) is mandatory: hardware-backed bitmaps cannot be
- * serialised into RemoteViews, causing a crash on Android 8+.
+ * serialized into RemoteViews, causing a crash on Android 8+.
  */
 private suspend fun downloadBitmap(context: Context, url: String): Bitmap? {
     return try {

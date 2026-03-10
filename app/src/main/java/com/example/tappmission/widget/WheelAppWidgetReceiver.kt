@@ -12,12 +12,14 @@ import androidx.glance.state.PreferencesGlanceStateDefinition
 import com.example.tappmission.data.models.DataResult
 import com.example.tappmission.data.repositories.WidgetsRepository
 import com.example.tappmission.data.remote.responses.WheelAssets
+import com.example.tappmission.utils.WheelWidgetKeys
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.apply
 
 /**
  * The "controller" of the widget. It is a BroadcastReceiver that the
