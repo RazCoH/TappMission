@@ -4,6 +4,7 @@ import com.example.tappmission.data.local.LocalDataSource
 import com.example.tappmission.data.models.DataResult
 import com.example.tappmission.data.remote.RemoteDataSource
 import com.example.tappmission.data.remote.responses.WidgetResponse
+import com.example.tappmission.utils.Time
 
 /**
  * Single source of truth for widget configuration data.
@@ -25,9 +26,10 @@ class WidgetsRepository(
 
     suspend fun getWheelWidgetData(): DataResult<WidgetResponse> {
         val cachedResponse = local.readCachedResponse()
-        val cacheExpiration = cachedResponse
+        val cacheExpiration =
+            cachedResponse
             ?.widgets?.firstOrNull()
-            ?.network?.attributes?.cacheExpiration
+            ?.network?.attributes?.cacheExpiration?.let { it * Time.ONE_SECOND }
             ?: 0L
 
         val isCacheValid = cachedResponse != null

@@ -141,9 +141,7 @@ private fun saveBitmapToFile(bitmap: Bitmap, file: File) {
         file.outputStream().use { out ->
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
         }
-    } catch (e: IOException) {
-        // Intentionally ignored
-    }
+    } catch (e: IOException) {}
 }
 
 private fun loadBitmapFromFile(file: File): Bitmap? {

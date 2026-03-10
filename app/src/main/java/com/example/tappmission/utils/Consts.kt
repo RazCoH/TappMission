@@ -11,3 +11,8 @@ object AssetsPaths {
     const val WHEEL_SPIN_PATH = "1qx0XNFz6wueMRES02D0QS27fMDfxoBAJ"
     const val WHEEL_PATH = "1gRxQmL7kLnxlTKRk6TKa-YaRKcf61tI9"
 }
+
+object Time {
+    const val ONE_SECOND = 1000L
+    const val ONE_MINUTE = 60 * ONE_SECOND
+}

@@ -11,7 +11,7 @@ import androidx.glance.action.clickable
 import androidx.glance.appwidget.action.actionRunCallback
 import com.example.tappmission.widget.WheelWidgetKeys
 import com.example.tappmission.widget.SpinActionCallback
-import androidx.core.graphics.createBitmap
+import com.example.tappmission.utils.extensions.getSafeRotatedBitmap
 
 @Composable
 fun WheelWidgetContent(
@@ -40,7 +40,7 @@ fun WheelWidgetContent(
 
 
         wheelBitmap?.let {
-            val displayBitmap = if (angle != 0f) getSafeRotatedBitmap(it, angle) else it
+            val displayBitmap = if (angle != 0f) it.getSafeRotatedBitmap(angle) else it
 
             Image(
                 provider = ImageProvider(displayBitmap),
@@ -70,37 +70,4 @@ fun WheelWidgetContent(
             )
         }
     }
-}
-
-
-/**
- * Rotates a bitmap while maintaining a fixed canvas size to prevent "shrinking" in Widgets.
- * * Strategy: By drawing the rotated bitmap onto a fixed-size square canvas that is slightly
- * larger than the source, the resulting Bitmap dimensions never change. This ensures that
- * Jetpack Glance/RemoteViews does not try to rescale the image during animation frames.
- *
- * @param source The original wheel bitmap.
- * @param angle The current rotation angle in degrees (0-360).
- * @return A new, fixed-size Bitmap containing the rotated wheel.
- */
-fun getSafeRotatedBitmap(source: Bitmap, angle: Float): Bitmap {
-
-    // Calculate a fixed square size based on the diagonal. add a 10% buffer to ensure corners are never.
-    val size = (maxOf(source.width, source.height) * 1.1).toInt()
-    val newBitmap = createBitmap(size, size)
-    val canvas = android.graphics.Canvas(newBitmap)
-    val matrix = android.graphics.Matrix()
-
-    // Apply rotation around the center of the ORIGINAL source bitmap.
-    matrix.postRotate(angle, source.width / 2f, source.height / 2f)
-
-    // Center the rotated bitmap
-    val translateX = (size - source.width) / 2f
-    val translateY = (size - source.height) / 2f
-    matrix.postTranslate(translateX, translateY)
-
-    val paint = android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG or android.graphics.Paint.FILTER_BITMAP_FLAG)
-    canvas.drawBitmap(source, matrix, paint)
-
-    return newBitmap
 }
