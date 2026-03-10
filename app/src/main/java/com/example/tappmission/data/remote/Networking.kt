@@ -1,7 +1,7 @@
 package com.example.tappmission.data.remote
 
 import com.example.tappmission.data.models.DataResult
-import com.example.tappmission.data.models.ServerRequest
+import com.example.tappmission.data.remote.ServerRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer

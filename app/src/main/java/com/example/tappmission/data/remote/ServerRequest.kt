@@ -1,4 +1,4 @@
-package com.example.tappmission.data.models
+package com.example.tappmission.data.remote
 
 data class ServerRequest(
     val url: String,

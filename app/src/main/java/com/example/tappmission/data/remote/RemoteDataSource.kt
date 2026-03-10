@@ -1,7 +1,7 @@
 package com.example.tappmission.data.remote
 
 import com.example.tappmission.data.models.DataResult
-import com.example.tappmission.data.models.ServerRequest
+import com.example.tappmission.data.remote.ServerRequest
 import com.example.tappmission.data.remote.responses.WidgetResponse
 import com.example.tappmission.utils.UrlPaths
 
