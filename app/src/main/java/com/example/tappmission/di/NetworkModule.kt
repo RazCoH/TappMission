@@ -1,7 +1,7 @@
 package com.example.tappmission.di
 
 import com.example.tappmission.BuildConfig
-import com.example.tappmission.data.Networking
+import com.example.tappmission.data.remote.Networking
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

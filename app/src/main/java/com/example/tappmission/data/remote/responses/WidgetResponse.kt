@@ -1,4 +1,4 @@
-package com.example.tappmission.data.responses
+package com.example.tappmission.data.remote.responses
 
 import com.example.tappmission.utils.AssetsPaths
 import kotlinx.serialization.SerialName

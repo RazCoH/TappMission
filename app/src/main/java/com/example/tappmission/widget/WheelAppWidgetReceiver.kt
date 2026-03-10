@@ -9,9 +9,9 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.state.PreferencesGlanceStateDefinition
-import com.example.tappmission.data.models.NetworkResult
+import com.example.tappmission.data.models.DataResult
 import com.example.tappmission.data.repositories.WidgetsRepository
-import com.example.tappmission.data.responses.WheelAssets
+import com.example.tappmission.data.remote.responses.WheelAssets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
@@ -90,7 +90,7 @@ class WheelAppWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
         }
 
         when (val result = repository.getWheelWidgetData()) {
-            is NetworkResult.Success -> {
+            is DataResult.Success -> {
                 val widget = result.data.widgets?.firstOrNull()
                 val cacheExpiration = widget?.network?.attributes?.cacheExpiration ?: 0L
                 val assets = widget?.wheel?.wheelAssets
@@ -122,8 +122,8 @@ class WheelAppWidgetReceiver : GlanceAppWidgetReceiver(), KoinComponent {
                     glanceAppWidget.update(context, id)
                 }
             }
-            is NetworkResult.Error -> applyErrorToAll(context, glanceIds, result.msg)
-            is NetworkResult.Exception -> applyErrorToAll(
+            is DataResult.Error -> applyErrorToAll(context, glanceIds, result.msg)
+            is DataResult.Exception -> applyErrorToAll(
                 context, glanceIds, result.e.message ?: "Unknown error"
             )
         }

@@ -7,7 +7,7 @@ import androidx.core.graphics.drawable.toBitmap
 import coil.ImageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import com.example.tappmission.data.responses.WheelAssets
+import com.example.tappmission.data.remote.responses.WheelAssets
 import com.example.tappmission.utils.UrlPaths
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

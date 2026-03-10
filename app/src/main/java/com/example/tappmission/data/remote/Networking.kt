@@ -1,6 +1,6 @@
-package com.example.tappmission.data
+package com.example.tappmission.data.remote
 
-import com.example.tappmission.data.models.NetworkResult
+import com.example.tappmission.data.models.DataResult
 import com.example.tappmission.data.models.ServerRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,19 +22,19 @@ class Networking(
     suspend fun <T> sendRequest(
         request: ServerRequest,
         serializer: KSerializer<T>
-    ): NetworkResult<T> = withContext(Dispatchers.IO) {
+    ): DataResult<T> = withContext(Dispatchers.IO) {
         try {
             val response = client.newCall(buildRequest(request)).execute()
             if (response.isSuccessful) {
                 val body = response.body.string()
-                NetworkResult.Success(json.decodeFromString(serializer, body))
+                DataResult.Success(json.decodeFromString(serializer, body))
             } else {
-                NetworkResult.Error(response.code, response.message)
+                DataResult.Error(response.code, response.message)
             }
         } catch (e: IOException) {
-            NetworkResult.Exception(e)
+            DataResult.Exception(e)
         } catch (e: SerializationException) {
-            NetworkResult.Exception(e)
+            DataResult.Exception(e)
         }
     }
 
