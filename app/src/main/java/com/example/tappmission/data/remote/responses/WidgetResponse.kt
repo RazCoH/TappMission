@@ -1,6 +1,7 @@
 package com.example.tappmission.data.remote.responses
 
 import com.example.tappmission.utils.AssetsPaths
+import com.example.tappmission.utils.Time
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -43,10 +44,12 @@ data class NetworkAttributes(
     @SerialName("retryAttempts")
     val retryAttempts: Int? = null,
     @SerialName("cacheExpiration")
-    val cacheExpiration: Long? = null,
+    private val _cacheExpiration: Long? = null,
     @SerialName("debugMode")
     val debugMode: Boolean? = null
-)
+){
+    val cacheExpiration get() = (_cacheExpiration?:0L) * Time.ONE_SECOND
+}
 
 @Serializable
 data class NetworkAssets(

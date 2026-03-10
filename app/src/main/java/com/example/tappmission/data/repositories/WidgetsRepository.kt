@@ -29,7 +29,7 @@ class WidgetsRepository(
         val cacheExpiration =
             cachedResponse
             ?.widgets?.firstOrNull()
-            ?.network?.attributes?.cacheExpiration?.let { it * Time.ONE_SECOND }
+            ?.network?.attributes?.cacheExpiration
             ?: 0L
 
         val isCacheValid = cachedResponse != null
