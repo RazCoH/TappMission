@@ -84,4 +84,7 @@ dependencies {
 
     // --- Coroutines ---
     implementation(libs.kotlinx.coroutines.android)
+
+    // --- React Native Bridge (compileOnly: the host RN app provides this at runtime) ---
+    compileOnly(libs.react.android)
 }
