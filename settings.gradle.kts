@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "TappMission"
-include(":app")
+rootProject.name = "react-native-widget-sdk"
+include(":android")
