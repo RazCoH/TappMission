@@ -4,18 +4,18 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application
-        android:name=".TappMissionApp"
-        android:allowBackup="true"
-        android:dataExtractionRules="@xml/data_extraction_rules"
-        android:fullBackupContent="@xml/backup_rules"
-        android:supportsRtl="true"
-        android:theme="@style/Theme.TappMission">
-        <activity
-            android:name=".MainActivity"
+    <application>
+
+        <!-- Self-initialize Koin without requiring the host app to use our Application class -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.TappMission" />
+            tools:node="merge">
+            <meta-data
+                android:name="com.example.tappmission.TappMissionInitializer"
+                android:value="androidx.startup" />
+        </provider>
 
         <receiver
             android:name=".widget.WheelAppWidgetReceiver"
