@@ -1,0 +1,34 @@
+{
+  "name": "react-native-widget-sdk",
+  "version": "1.0.0",
+  "description": "Android Home Screen Widget SDK for React Native",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": [
+    "android",
+    "gradle",
+    "build.gradle.kts",
+    "settings.gradle.kts",
+    "gradle.properties",
+    "gradlew",
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "keywords": [
+    "react-native",
+    "android",
+    "widget",
+    "home-screen",
+    "appwidget"
+  ],
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": ""
+  }
+}
