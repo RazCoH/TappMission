@@ -2,13 +2,16 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    id("maven-publish")
 }
 
 android {
     namespace = "com.example.tappmission"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
+    compileSdk = 36
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
         }
     }
 
@@ -87,4 +90,16 @@ dependencies {
 
     // --- React Native Bridge (compileOnly: the host RN app provides this at runtime) ---
     compileOnly(libs.react.android)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.RazCoH"
+                artifactId = "TappMission"
+            }
+        }
+    }
 }
