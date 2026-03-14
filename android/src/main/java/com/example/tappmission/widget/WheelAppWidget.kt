@@ -58,12 +58,19 @@ private fun WidgetContent(context: Context) {
 
     when (status) {
         WheelWidgetKeys.STATUS_LOADING -> LoadingContent()
-        WheelWidgetKeys.STATUS_SUCCESS -> WheelWidgetContent(
-            wheelBitmap = loadCachedBitmap(context, AssetType.WHEEL),
-            backgroundBitmap = loadCachedBitmap(context, AssetType.BACKGROUND),
-            frameBitmap = loadCachedBitmap(context, AssetType.FRAME),
-            buttonBitmap = loadCachedBitmap(context, AssetType.SPIN)
-        )
+        WheelWidgetKeys.STATUS_SUCCESS -> {
+            val wheelBitmap = loadCachedBitmap(context, AssetType.WHEEL)
+            val bgBitmap = loadCachedBitmap(context, AssetType.BACKGROUND)
+            val frameBitmap = loadCachedBitmap(context, AssetType.FRAME)
+            val spinBitmap = loadCachedBitmap(context, AssetType.SPIN)
+            // Guard: if bitmaps are missing the interactor hasn't finished yet.
+            // Show loading rather than an empty blank widget.
+            if (wheelBitmap != null && bgBitmap != null) {
+                WheelWidgetContent(wheelBitmap, bgBitmap, frameBitmap, spinBitmap)
+            } else {
+                LoadingContent()
+            }
+        }
         else -> ErrorContent()
     }
 }

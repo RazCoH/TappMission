@@ -13,6 +13,7 @@ import com.example.tappmission.utils.WheelWidgetKeys
 import com.example.tappmission.widget.AssetType
 import com.example.tappmission.widget.WheelAppWidget
 import com.example.tappmission.widget.getBitmapWithCache
+import com.example.tappmission.widget.loadCachedBitmap
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
@@ -61,9 +62,19 @@ class WheelWidgetInteractor(
                 val rotationConfig = widget?.wheel?.rotation
 
                 // Download or validate/reuse cached bitmaps for all 4 layers in parallel.
-                // getBitmapWithCache saves each file to cacheDir as a side-effect;
-                // provideGlance reads them from disk when it redraws the widget.
                 fetchAllBitmaps(cacheExpiration, assets)
+
+                // Only report success if the bitmaps are actually on disk.
+                // fetchAllBitmaps swallows download/write failures silently, so we
+                // verify here rather than unconditionally setting STATUS_SUCCESS and
+                // leaving the widget with a blank WheelWidgetContent(null bitmaps).
+                val bitmapsReady = AssetType.entries.all {
+                    loadCachedBitmap(context, it) != null
+                }
+                if (!bitmapsReady) {
+                    applyErrorToAll(glanceIds, "Widget images could not be loaded")
+                    return
+                }
 
                 glanceIds.forEach { id ->
                     updateWidgetState(id) {
