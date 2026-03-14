@@ -49,8 +49,10 @@ class WheelWidgetInteractor(
             .getGlanceIds(WheelAppWidget::class.java)
 
         glanceIds.forEach { id ->
-            updateWidgetState(id) {
-                this[WheelWidgetKeys.STATUS] = WheelWidgetKeys.STATUS_LOADING
+            updateAppWidgetState(context, PreferencesGlanceStateDefinition, id) { prefs ->
+                prefs.toMutablePreferences().also {
+                    it[WheelWidgetKeys.STATUS] = WheelWidgetKeys.STATUS_LOADING
+                }
             }
         }
 
